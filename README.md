@@ -8,8 +8,6 @@ Cross platform egui application template,
 - egui-tiles
 - egui-logger
 
-![Rust CI](https://github.com/atomic-media-studio/egui-app/actions/workflows/rust-ci.yml/badge.svg)
-
 ### Desktop Application
 
 Windows and Linux
