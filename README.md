@@ -1,7 +1,12 @@
 # egui-app
 
-egui application template
+Cross platform egui application template,
 
+- eframe
+- egui
+- egui-phosphor
+- egui-tiles
+- egui-logger
 
 ![Rust CI](https://github.com/atomic-media-studio/egui-app/actions/workflows/rust-ci.yml/badge.svg)
 
