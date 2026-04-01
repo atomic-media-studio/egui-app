@@ -1,6 +1,7 @@
 use eframe::egui;
 use egui_file_dialog::FileDialog;
 use egui_phosphor::regular;
+use egui_plot::{Line, Plot, PlotPoints};
 
 /// Windows 11 and later use build numbers >= 22000 (see `CurrentBuild` in registry).
 #[cfg(target_os = "windows")]
@@ -96,6 +97,15 @@ impl egui_tiles::Behavior<DockPane> for DockBehavior<'_> {
                         self.file_dialog.pick_file();
                     }
                 });
+            } else if pane.nr == 1 {
+                Plot::new("demo_plot")
+                    .height(ui.available_height() - 30.0)
+                    .show(ui, |plot_ui| {
+                        plot_ui.line(Line::new(
+                            "sin(x)",
+                            PlotPoints::from_explicit_callback(|x| x.sin(), -10.0..=10.0, 256),
+                        ));
+                    });
             } else {
                 ui.label("Resize the splitters or drag tabs to dock tiles.");
             }

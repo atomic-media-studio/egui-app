@@ -8,6 +8,7 @@ Cross platform egui application template,
 - egui-tiles
 - egui-logger
 - egui-file-dialog
+- egui-plot
 
 ### Desktop Application
 
