@@ -7,6 +7,7 @@ Cross platform egui application template,
 - egui-phosphor
 - egui-tiles
 - egui-logger
+- egui-file-dialog
 
 ### Desktop Application
 

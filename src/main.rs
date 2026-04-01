@@ -1,4 +1,5 @@
 use eframe::egui;
+use egui_file_dialog::FileDialog;
 use egui_phosphor::regular;
 
 /// Windows 11 and later use build numbers >= 22000 (see `CurrentBuild` in registry).
@@ -63,9 +64,11 @@ struct DockPane {
     nr: usize,
 }
 
-struct DockBehavior;
+struct DockBehavior<'a> {
+    file_dialog: &'a mut FileDialog,
+}
 
-impl egui_tiles::Behavior<DockPane> for DockBehavior {
+impl egui_tiles::Behavior<DockPane> for DockBehavior<'_> {
     fn tab_title_for_pane(&mut self, pane: &DockPane) -> egui::WidgetText {
         format!("Pane {}", pane.nr).into()
     }
@@ -81,13 +84,17 @@ impl egui_tiles::Behavior<DockPane> for DockBehavior {
 
             if pane.nr == 0 {
                 ui.label(format!(
-                    "Phosphor icons: {} {}",
+                    "Phosphor icons: {} {} {}",
                     regular::ALARM,
-                    regular::AIRPLANE
+                    regular::AIRPLANE,
+                    regular::FOLDER_OPEN
                 ));
                 ui.horizontal(|ui| {
                     let _ = ui.button(regular::ALARM);
                     let _ = ui.button(regular::AIRPLANE);
+                    if ui.button(regular::FOLDER_OPEN).clicked() {
+                        self.file_dialog.pick_file();
+                    }
                 });
             } else {
                 ui.label("Resize the splitters or drag tabs to dock tiles.");
@@ -154,6 +161,7 @@ fn main() -> eframe::Result<()> {
 
             Ok(Box::new(TemplateApp {
                 tree: create_dock_tree(),
+                file_dialog: FileDialog::new(),
                 logged_startup: false,
             }))
         }),
@@ -162,6 +170,7 @@ fn main() -> eframe::Result<()> {
 
 struct TemplateApp {
     tree: egui_tiles::Tree<DockPane>,
+    file_dialog: FileDialog,
     logged_startup: bool,
 }
 
@@ -175,8 +184,14 @@ impl eframe::App for TemplateApp {
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show_inside(ui, |ui| {
-            let mut behavior = DockBehavior;
+            let mut behavior = DockBehavior {
+                file_dialog: &mut self.file_dialog,
+            };
             self.tree.ui(&mut behavior, ui);
+            self.file_dialog.update(ui);
+            if let Some(path) = self.file_dialog.take_picked() {
+                log::info!("picked file: {}", path.display());
+            }
         });
 
         let ctx = ui.ctx();
